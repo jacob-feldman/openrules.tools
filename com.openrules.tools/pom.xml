@@ -3,7 +3,7 @@
 
     <groupId>com.openrules</groupId>
     <artifactId>openrules-tools</artifactId>
-    <version>8.1.1-SNAPSHOT</version>
+    <version>8.1.1</version>
 	<name>OpenRules Tools</name>
 	
 	<organization>

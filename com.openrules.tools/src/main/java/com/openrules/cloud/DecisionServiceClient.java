@@ -138,9 +138,13 @@ public class DecisionServiceClient {
         try (InputStream is = connection.getInputStream(); Scanner scanner = new Scanner(is, "utf-8")) {
             resultJson = scanner.useDelimiter("\\A").next();
             this.response = mapper.readValue(resultJson, Response.class);
+            if (this.response.getDecisionStatusCode() != 200) {
+                throw new Exception("Failed to execute DecisionServiceClient for " + endpoint 
+                        + "\nError: " + this.response.getErrorMessage());
+            }
             return true;
         } catch (Exception e) {
-            throw new Exception("Failed to execute LambdaClient for " + endpoint, e);
+            throw new Exception("Failed to execute DecisionServiceClient for " + endpoint, e);
         }
     }
 }
