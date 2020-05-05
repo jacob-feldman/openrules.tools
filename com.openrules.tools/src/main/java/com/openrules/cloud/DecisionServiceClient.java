@@ -118,7 +118,7 @@ public class DecisionServiceClient {
     public boolean execute() throws Exception {
 
         String json = mapper.writeValueAsString(request);
-
+        System.out.println("DecisionServiceClient requst JSON:\n" + json);
         HttpURLConnection connection = (HttpURLConnection) this.endpoint.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json;utf-8");
@@ -137,6 +137,7 @@ public class DecisionServiceClient {
         String resultJson;
         try (InputStream is = connection.getInputStream(); Scanner scanner = new Scanner(is, "utf-8")) {
             resultJson = scanner.useDelimiter("\\A").next();
+            System.out.println("DecisionServiceClient response JSON:\n" + resultJson);
             this.response = mapper.readValue(resultJson, Response.class);
             if (this.response.getDecisionStatusCode() != 200) {
                 throw new Exception("Failed to execute DecisionServiceClient for " + endpoint 
