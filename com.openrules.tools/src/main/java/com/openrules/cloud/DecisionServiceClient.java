@@ -95,10 +95,12 @@ public class DecisionServiceClient {
     private final URL endpoint;
     private Map<String, Object> request;
     private Response response;
+    private boolean trace;
 
     public DecisionServiceClient(String endpoint) throws MalformedURLException {
         this.endpoint = new URL(endpoint);
         request = new HashMap<String, Object>();
+        trace = true;
     }
 
     public void putObject(String key, Object object) {
@@ -115,10 +117,19 @@ public class DecisionServiceClient {
         return mapper.treeToValue(node, klass);
     }
 
-    public boolean execute() throws Exception {
+    public boolean isTrace() {
+        return trace;
+    }
 
-        String json = mapper.writeValueAsString(request);
-        System.out.println("DecisionServiceClient requst JSON:\n" + json);
+    public void setTrace(boolean trace) {
+        this.trace = trace;
+    }
+
+    public boolean execute() throws Exception {
+        String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
+        if (trace) {
+            System.out.println("DecisionServiceClient request JSON:\n" + json);
+        }
         HttpURLConnection connection = (HttpURLConnection) this.endpoint.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json;utf-8");
@@ -137,8 +148,11 @@ public class DecisionServiceClient {
         String resultJson;
         try (InputStream is = connection.getInputStream(); Scanner scanner = new Scanner(is, "utf-8")) {
             resultJson = scanner.useDelimiter("\\A").next();
-            System.out.println("DecisionServiceClient response JSON:\n" + resultJson);
             this.response = mapper.readValue(resultJson, Response.class);
+            if (trace) {
+                String prettyJson = ( this.response == null ? null : mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.response));
+                System.out.println("DecisionServiceClient response JSON:\n" + prettyJson);
+            }
             if (this.response.getDecisionStatusCode() != 200) {
                 throw new Exception("Failed to execute DecisionServiceClient for " + endpoint 
                         + "\nError: " + this.response.getErrorMessage());
