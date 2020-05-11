@@ -52,7 +52,7 @@ public class DecisionServiceClient {
 
     static class Response {
         private int decisionStatusCode;
-        private long rulesExecutionTimeMs;
+        private double rulesExecutionTimeMs;
         private String errorMessage;
         private JsonNode response;
 
@@ -64,11 +64,11 @@ public class DecisionServiceClient {
             this.decisionStatusCode = decisionStatusCode;
         }
 
-        public long getRulesExecutionTimeMs() {
+        public double getRulesExecutionTimeMs() {
             return rulesExecutionTimeMs;
         }
 
-        public void setRulesExecutionTimeMs(long ruleExecutionTimeMs) {
+        public void setRulesExecutionTimeMs(double ruleExecutionTimeMs) {
             this.rulesExecutionTimeMs = ruleExecutionTimeMs;
         }
 
@@ -126,6 +126,12 @@ public class DecisionServiceClient {
     }
 
     public boolean execute() throws Exception {
+        if (trace) {
+            request.put("trace","On");
+        }
+        else {
+            request.remove("trace");
+        }
         String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
         if (trace) {
             System.out.println("DecisionServiceClient request JSON:\n" + json);
@@ -145,21 +151,26 @@ public class DecisionServiceClient {
             return false;
         }
 
-        String resultJson;
+        String resultJson = null;
         try (InputStream is = connection.getInputStream(); Scanner scanner = new Scanner(is, "utf-8")) {
             resultJson = scanner.useDelimiter("\\A").next();
             this.response = mapper.readValue(resultJson, Response.class);
-            if (trace) {
-                String prettyJson = ( this.response == null ? null : mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.response));
-                System.out.println("DecisionServiceClient response JSON:\n" + prettyJson);
-            }
             if (this.response.getDecisionStatusCode() != 200) {
                 throw new Exception("Failed to execute DecisionServiceClient for " + endpoint 
                         + "\nError: " + this.response.getErrorMessage());
             }
+            if (trace) {
+                String prettyJson = ( this.response == null ? null : mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.response));
+                System.out.println("DecisionServiceClient response JSON:\n" + prettyJson);
+            }
             return true;
         } catch (Exception e) {
+            System.out.println("DecisionServiceClient invalid response:\n" + resultJson);
             throw new Exception("Failed to execute DecisionServiceClient for " + endpoint, e);
         }
+    }
+    
+    public double getRulesExecutionTime() {
+        return this.response.getRulesExecutionTimeMs();
     }
 }
