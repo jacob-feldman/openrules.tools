@@ -127,7 +127,7 @@ public class DecisionServiceClient {
 
     public boolean execute() throws Exception {
         if (trace) {
-            request.put("trace","On");
+            request.put("trace",true);
         }
         else {
             request.remove("trace");
