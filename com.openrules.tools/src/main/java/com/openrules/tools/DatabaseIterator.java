@@ -61,7 +61,7 @@ public class DatabaseIterator {
 	}
 
 	/**
-	 * @param args
+	 * @param args parameters
 	 */
 	public static void mainClient(String[] args) {
 		// OpenRulesEngine engine = new OpenRulesEngine("file:war/rules/data/Test.xls");

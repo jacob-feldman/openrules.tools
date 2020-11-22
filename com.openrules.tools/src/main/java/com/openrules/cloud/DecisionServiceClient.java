@@ -55,6 +55,7 @@ public class DecisionServiceClient {
         private double rulesExecutionTimeMs;
         private String errorMessage;
         private JsonNode response;
+        private JsonNode executedRules;
 
         public int getDecisionStatusCode() {
             return decisionStatusCode;
@@ -86,6 +87,14 @@ public class DecisionServiceClient {
 
         public void setResponse(JsonNode response) {
             this.response = response;
+        }
+
+        public JsonNode getExecutedRules() {
+            return executedRules;
+        }
+
+        public void setExecutedRules(JsonNode executedRules) {
+            this.executedRules = executedRules;
         }
 
     }

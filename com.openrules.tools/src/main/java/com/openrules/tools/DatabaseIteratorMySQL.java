@@ -24,8 +24,8 @@ public class DatabaseIteratorMySQL {
 	/**
 	 * Uses the default driverName = "sun.jdbc.odbc.JdbcOdbcDriver";
 	 * 
-	 * @param dbName
-	 * @param tableName
+	 * @param dbName db name
+	 * @param tableName table name
 	 */
 	public DatabaseIteratorMySQL(String dbName, String tableName) {
 		this(dbName,tableName,null,null,null);
@@ -73,7 +73,7 @@ public class DatabaseIteratorMySQL {
 	}
 
 	/**
-	 * @param args
+	 * @param args parameters
 	 */
 	public static void mainClient(String[] args) {
 		// OpenRulesEngine engine = new OpenRulesEngine("file:war/rules/data/Test.xls");
